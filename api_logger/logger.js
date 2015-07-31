@@ -16,11 +16,28 @@ callback = function(response) {
     str += chunk;
   });
 
+  function isNorthernNorthbound(elem, index, array) {
+    return (elem.lineId == 'northern' && elem.direction == 'outbound');
+  }
+
+  function compareArrivalTime(preda, predb) {
+    return preda.timeToStation - predb.timeToStation;
+  }
+
+  function printArrivalData(curr, index, array) {
+    console.log(curr.vehicleId + " to " +
+                curr.destinationName + ", arriving in " +
+                curr.timeToStation + " seconds, currently " +
+                curr.currentLocation);
+  }
+
   //the whole response has been recieved, so we just print it out here
   response.on('end', function () {
-    var data = JSON.parse(str)[0];
-    //console.log(data);
-    console.log(data.currentLocation+" "+data.timeToStation);
+    var data = (JSON.parse(str)).filter(isNorthernNorthbound);
+
+    data.sort(compareArrivalTime);
+    data.map(printArrivalData);
+    console.log('');
   });
 }
 
@@ -31,4 +48,5 @@ function getAPI () {
   https.request(options, callback).end();
 }
 
+//https.request(options, callback).end();
 setInterval(getAPI,10000)
