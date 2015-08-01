@@ -22,9 +22,9 @@ io.sockets.on('connection', function(socket) {
 
   console.log('Tube predictor started...');
 
-  socket.on('getInterArrivalTimes', function(args) {
-    var interArrivalTimes = interArrival.getInterArrivals();
-    socket.emit('newInterArrivalTimes', interArrivalTimes);
+  socket.on('getTubeServiceData', function(args) {
+    var tubeServiceData = interArrival.getTubeServiceData();
+    socket.emit('newTubeServiceData', tubeServiceData);
   });
 
   socket.on('getTubeTime', function(station) {

@@ -7,6 +7,16 @@ var nextTrainIn;
 var incomingTrain; // If train is a new incoming train (false: recorded on platform)
 
 
+exports.getTubeServiceData = function () {
+  var res = {
+    interTrainDeparture : interTrainDeparture,
+    arrivingVehicleId   : arrivingVehicleId,
+    trainDwellTime      : trainDwellTime,
+    incomingTrain       : incomingTrain
+  };
+  return res;
+}
+
 // Load from "persistent" storage upon startup
 fs.readFile('./api_logger/log.txt', function (err, data) {
   if (err) throw err;
