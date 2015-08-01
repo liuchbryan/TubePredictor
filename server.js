@@ -36,7 +36,7 @@ io.sockets.on('connection', function(socket) {
           })
         northernTrains.sort(function (a,b){return a.timeToStation - b.timeToStation});
         //console.log(timeData);
-        socket.emit('newTubeTime', northernTrains[0].timeToStation);
+        socket.emit('newTubeTime', [northernTrains[0].timeToStation, northernTrains[1].timeToStation]);
         console.log('Sending tube time...'+northernTrains[0].timeToStation);
       });
     }
