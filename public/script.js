@@ -481,7 +481,7 @@ function drawChart() {
             plotLines: [{
                 value: 0,
                 width: 1,
-                color: '#808080'
+                color: '#0099CC'
             }]
         },
         legend: {
