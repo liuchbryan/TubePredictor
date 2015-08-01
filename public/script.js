@@ -1,6 +1,6 @@
 var socket = io.connect('http://localhost:8080');
 var clock;
-var current_time = 100000;
+var current_time = 1000;
 
 $(function() {
   clock = $('.tubeClock').FlipClock(3600, {
@@ -27,13 +27,24 @@ $(function(){
 });
 
 socket.on('newTubeTime', function(time) {
+
   //document.getElementById('timeValue').innerHTML = '<h2>Train leaving in ' + time + ' seconds </h2>';
-  if (time !== current_time) {
-    current_time = time;
-    clock.stop();
-    clock.setTime(time);
+  var first_train = time[0];
+  var second_train = time[1];
+  if (current_time === undefined && first_train < 45) {
+    console.log("train too soon so giving user the next one");
+    current_time = second_train;
+    clock.setTime(current_time);
     clock.start();
+  } else if (Math.abs(first_train - current_time) > 10) {
+    current_time = first_train;
+    clock.stop();
+    clock.setTime(first_train);
+    if (current_time !== 0) {
+      clock.start();
+    }
   }
+
 
   //clock.start();
 });
@@ -46,7 +57,7 @@ socket.on('newArrivalPrediction', function(data) {
 setInterval(function() {
   socket.emit('getTubeTime', "Moorgate");
   socket.emit('getArrivalPrediction', "Moorgate");
-}, 10000);
+}, 5000);
 
 socket.emit('getTubeTime', "Moorgate");
 socket.emit('getArrivalPrediction', "Moorgate");
