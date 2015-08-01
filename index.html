@@ -2,17 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <!--Import materialize.css-->
-      <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <!--Import materialize.css
+      <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>-->
 
       <!--Let browser know website is optimized for mobile-->
-      <meta name="viewport" content="width=device-width, initial-scale=1
+      <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-      <script type="text/javascript" src="js/materialize.min.js"></script>
     <script>
       var socket = io.connect('http://localhost:8080');
       socket.on('connect', function(){
@@ -25,8 +24,18 @@
        });
      });
 
+     $(function(){
+      $('#getPrediction').click( function() {
+        socket.emit('getArrivalPrediction', "Moorgate");
+      });
+    });
+
       socket.on('newTubeTime', function(time) {
         document.getElementById('timeValue').innerHTML = time;
+      });
+
+      socket.on('newArrivalPrediction', function(data) {
+        console.log(data);
       });
 
     </script>
@@ -36,6 +45,7 @@
       <h1>Tube Predictor</h1>
     </div>
      <button type="button" id="getTime" class="btn btn-default">Get Tube Time</button>
+     <button type="button" id="getPrediction" class="btn btn-default">Get Tube Prediction</button>
     <div class="container" id="timeValue">
     </div>
   </body>
