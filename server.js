@@ -6,6 +6,10 @@ var https = require("https");
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
+// module for accessing the data about the interval between train arrivals
+var interArrival = require('./api_logger/interArrival.js');
+
+
 server.listen(port);
 
 app.get('', function(req,res) {
@@ -17,6 +21,11 @@ app.use(express.static('public'));
 io.sockets.on('connection', function(socket) {
 
   console.log('Tube predictor started...');
+
+  socket.on('getInterArrivalTimes', function(args) {
+    var interArrivalTimes = interArrival.getInterArrivals();
+    socket.emit('newInterArrivalTimes', interArrivalTimes);
+  });
 
   socket.on('getTubeTime', function(station) {
     callback = function(response) {
