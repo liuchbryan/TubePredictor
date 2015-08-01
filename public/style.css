@@ -128,3 +128,7 @@ body {
 .tt-suggestion p {
   margin: 0;
 }
+
+.space {
+	margin-top: 20px;
+}
