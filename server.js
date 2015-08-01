@@ -38,7 +38,12 @@ io.sockets.on('connection', function(socket) {
 
       //the whole response has been recieved, so we return it
       response.on('end', function () {
-        var timeData = JSON.parse(str);
+        try {
+          var timeData = JSON.parse(str);
+        } catch (e) {
+          console.log("TfL Rate limit exceeded");
+          return;
+        }
         var northernTrains = timeData.filter(function (a){
           var rc = (a.lineId ==="northern" && a.direction==="outbound");
           return rc;
@@ -70,7 +75,12 @@ io.sockets.on('connection', function(socket) {
 
       //the whole response has been recieved, so we return it
       response.on('end', function () {
-        var timeData = JSON.parse(str);
+        try {
+          var timeData = JSON.parse(str);
+        } catch (e) {
+          console.log("TfL Rate limit exceeded");
+          return;
+        }
         var northernTrains = timeData.filter(function (a){
           var rc = (a.lineId ==="northern" && a.direction==="outbound");
           return rc;
@@ -98,7 +108,12 @@ io.sockets.on('connection', function(socket) {
 
       //the whole response has been recieved, so we return it
       response.on('end', function () {
-        var stations = JSON.parse(str).filter(function (a) {return a.modeName = "tube"});
+        try {
+          var stations = JSON.parse(str).filter(function (a) {return a.modeName = "tube"});
+        } catch (e) {
+          console.log("TfL rate limit exceeded");
+          return;
+        }
         console.log(stations);
         //northernTrains.sort(function (a,b){return a.timeToStation - b.timeToStation});
         //socket.emit('newArrivalPrediction', northernTrains);
