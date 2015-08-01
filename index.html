@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
@@ -46,15 +47,31 @@
     countdown: true
   });
   </script>
+  <script src="/flipclock/js/flipclock.min.js"></script>
+  <script src="script.js"></script>
+  <link rel="stylesheet" href="/flipclock/css/flipclock.css">
+
 </head>
 <body>
+
+  <div class="container" align="center">
+    <div class="my_block" align="center">
+      <h1>Tube Predictor</h1>
+      <div class="tubeClock"></div>
+      <button type="button" id="getTime" class="btn btn-default">Get Tube Time</button>
+      <button type="button" id="getPrediction" class="btn btn-default">Get Tube Prediction</button>
+      <!--<button type="button" id="guest" class="btn btn-block my_btn" value="">Continue</button>-->
+    </div>
+  </div>
+
   <div class="container">
-    <h1>Tube Predictor</h1>
+
   </div>
-  <button type="button" id="getTime" class="btn btn-default">Get Tube Time</button>
-  <button type="button" id="getPrediction" class="btn btn-default">Get Tube Prediction</button>
-  <div class="container" id="timeValue">
-  </div>
-  <div class="your-clock"></div>
+
+  <div class="container" id="timeValue"></div>
+
+
+
+  <div class="container" id="log"></div>
 </body>
 </html>
