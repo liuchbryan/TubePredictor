@@ -29,7 +29,11 @@ io.sockets.on('connection', function(socket) {
 
       //the whole response has been recieved, so we return it
       response.on('end', function () {
-        socket.emit('newTubeTime', JSON.parse(str)[0].timeToStation);
+        var timeData = JSON.parse(str);
+        timeData.sort(function (a,b){return a.timeToStation - b.timeToStation});
+        console.log(timeData);
+        socket.emit('newTubeTime', timeData[0].timeToStation);
+        console.log('Sending tube time...'+timeData[0].timeToStation);
       });
     }
 
@@ -37,7 +41,6 @@ io.sockets.on('connection', function(socket) {
     // Get tube time logic here (time in seconds)
     //var time = 180;
 
-    console.log('Sending tube time...');
 
     //socket.emit('newTubeTime', time);
 
