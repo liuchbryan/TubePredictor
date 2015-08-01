@@ -464,6 +464,9 @@ function drawChart() {
       }
 
       $('#chart').highcharts({
+        chart: {
+          backgroundColor: '#222222'
+        },
         title: {
             text: 'Recent Tube Arrivals',
             x: -20 //center
