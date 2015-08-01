@@ -458,7 +458,7 @@ function drawChart() {
     socket.on('newTubeServiceData', function(data) {
       var dataLength = data.interTrainDeparture.lenght;
       console.log(dataLength);
-      var xData;
+      var xData = [];
       for (var i = 1; i <= dataLength; i++) {
         xData.push(i);
       }
