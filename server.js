@@ -12,39 +12,54 @@ app.get('', function(req,res) {
   res.sendFile(__dirname + '/index.html');
 });
 
+app.use(express.static('public'));
+
 io.sockets.on('connection', function(socket) {
 
   console.log('Tube predictor started...');
 
   socket.on('getTubeTime', function(station) {
+    callback = function(response) {
+      var str = '';
 
+      //another chunk of data has been recieved, so append it to `str`
+      response.on('data', function (chunk) {
+        str += chunk;
+      });
+
+      //the whole response has been recieved, so we return it
+      response.on('end', function () {
+        socket.emit('newTubeTime', JSON.parse(str)[0].timeToStation);
+      });
+    }
+
+    https.request(options, callback).end();
     // Get tube time logic here (time in seconds)
-    var time = '180';
+    //var time = 180;
 
     console.log('Sending tube time...');
 
-    var message = '<h1>Tube leaving in: ' + time + ' seconds</h1>';
-    socket.emit('newTubeTime', message);
+    //socket.emit('newTubeTime', time);
 
   });
 
   socket.on('getArrivalPrediction', function(args) {
+    callback = function(response) {
+      var str = '';
+
+      //another chunk of data has been recieved, so append it to `str`
+      response.on('data', function (chunk) {
+        str += chunk;
+      });
+
+      //the whole response has been recieved, so we return it
+      response.on('end', function () {
+        socket.emit('newArrivalPrediction', JSON.parse(str));
+      });
+    }
+
     https.request(options, callback).end();
   });
-
-  callback = function(response) {
-    var str = '';
-
-    //another chunk of data has been recieved, so append it to `str`
-    response.on('data', function (chunk) {
-      str += chunk;
-    });
-
-    //the whole response has been recieved, so we return it
-    response.on('end', function () {
-      socket.emit('newArrivalPrediction', JSON.parse(str));
-    });
-  }
 
 });
 
