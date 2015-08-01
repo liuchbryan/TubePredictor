@@ -12,6 +12,12 @@
   <link rel="stylesheet" href="/assets/css/flipclock.css">
   <script>
   var socket = io.connect('http://localhost:8080');
+
+  var clock = $('.tubeClock').FlipClock(3600, {
+    countdown: true,
+    clockFace: 'MinuteCounter'
+  });
+
   socket.on('connect', function(){
     alert("Session started!");
   });
@@ -29,7 +35,8 @@
   });
 
   socket.on('newTubeTime', function(time) {
-    document.getElementById('timeValue').innerHTML = time;
+    document.getElementById('timeValue').innerHTML = '<h2>Train leaving in ' + time + ' seconds </h2>';
+    alert('should be displaying clock!');
     clock.setTime(time);
     //clock.start();
   });
@@ -39,9 +46,7 @@
   });
 
 
-  var clock = $('.clock').FlipClock(3600, {
-    countdown: true
-  });
+
   </script>
 </head>
 <body>
@@ -52,6 +57,6 @@
   <button type="button" id="getPrediction" class="btn btn-default">Get Tube Prediction</button>
   <div class="container" id="timeValue">
   </div>
-  <div class="your-clock"></div>
+  <div class="tubeClock"></div>
 </body>
 </html>
