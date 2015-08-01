@@ -57,6 +57,7 @@ callback = function(response) {
 
   //the whole response has been recieved, so we just print it out here
   response.on('end', function () {
+    
     var data = (JSON.parse(str)).filter(isNorthernNorthbound);
 
     var firstTrain = data.sort(compareArrivalTime)[0];
@@ -93,7 +94,7 @@ callback = function(response) {
                          "interTrainDeparture": interTrainDeparture,
                          "trainDwellTime": trainDwellTime});
       console.log(dataToWrite);
-      fs.writeFile('./Tubepredictor/api_logger/log.txt', dataToWrite, function (err) {
+      fs.writeFile('./TubePredictor/api_logger/log.txt', dataToWrite, function (err) {
         if (err) return console.log(err);
         //console.log('dataToWrite > log.txt');
       });
@@ -105,9 +106,7 @@ callback = function(response) {
   });
 }
 
-exports.getInterArrivals = function() {
-  return interTrainDeparture;
-}
+
 
 function populateInterDepartureTime () {
   //console.log('----------------')
@@ -127,4 +126,4 @@ function populateInterDepartureTime () {
 
 
 //https.request(options, callback).end();
-setInterval(populateInterDepartureTime,5000);
+setInterval(populateInterDepartureTime,5000)
