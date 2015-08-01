@@ -13,7 +13,7 @@
   <script src="http://cdn.theericmiller.com/flipclock.min.js"></script>
   <link rel="stylesheet" href="/assets/css/flipclock.css">
   <script>
-  var socket = io.connect('http://localhost:8080');
+/*  var socket = io.connect('http://localhost:8080');
   socket.on('connect', function(){
     //alert("Session started!");
   });
@@ -46,7 +46,7 @@
 
   var clock = $('.clock').FlipClock(3600, {
     countdown: true
-  });
+  });*/
   </script>
   <script src="/flipclock/js/flipclock.min.js"></script>
   <script src="script.js"></script>
@@ -59,6 +59,7 @@
     <div class="my_block" align="center">
       <h1>Tube Predictor</h1>
       <br>
+      <div class="container" id="notification"></div>
       <div class="tubeClock"></div>
       <!--<button type="button" id="getTime" class="btn btn-default">Get Tube Time</button>
       <button type="button" id="getPrediction" class="btn btn-default">Get Tube Prediction</button>-->
