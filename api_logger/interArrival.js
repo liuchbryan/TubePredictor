@@ -105,7 +105,9 @@ callback = function(response) {
   });
 }
 
-
+exports.getInterArrivals = function() {
+  return interTrainDeparture;
+}
 
 function populateInterDepartureTime () {
   //console.log('----------------')
@@ -125,4 +127,4 @@ function populateInterDepartureTime () {
 
 
 //https.request(options, callback).end();
-setInterval(populateInterDepartureTime,5000)
+setInterval(populateInterDepartureTime,5000);
