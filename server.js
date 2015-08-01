@@ -38,7 +38,12 @@ io.sockets.on('connection', function(socket) {
 
       //the whole response has been recieved, so we return it
       response.on('end', function () {
-        var timeData = JSON.parse(str);
+        try {
+          var timeData = JSON.parse(str);
+        } catch (e) {
+          console.log("TfL Rate limit exceeded");
+          return;
+        }
         var northernTrains = timeData.filter(function (a){
           var rc = (a.lineId ==="northern" && a.direction==="outbound");
           return rc;
@@ -70,14 +75,48 @@ io.sockets.on('connection', function(socket) {
 
       //the whole response has been recieved, so we return it
       response.on('end', function () {
-        var timeData = JSON.parse(str);
+        try {
+          var timeData = JSON.parse(str);
+        } catch (e) {
+          console.log("TfL Rate limit exceeded");
+          return;
+        }
         var northernTrains = timeData.filter(function (a){
           var rc = (a.lineId ==="northern" && a.direction==="outbound");
           return rc;
-          })
-        console.log(northernTrains.length);
+        })
         northernTrains.sort(function (a,b){return a.timeToStation - b.timeToStation});
         socket.emit('newArrivalPrediction', northernTrains);
+      });
+    }
+
+    https.request(options, callback).end();
+  });
+
+  socket.on('getNearestStation', function (args) {
+    var options = {
+      host: 'api.tfl.gov.uk',
+      path: '/Place?lat='+args.lat+'&lon='+args.long+'&radius=1000&app_key=a1bb31ec35c0148a84f5de064202c479'
+    };
+    callback = function(response) {
+      var str = '';
+
+      //another chunk of data has been recieved, so append it to `str`
+      response.on('data', function (chunk) {
+        str += chunk;
+      });
+
+      //the whole response has been recieved, so we return it
+      response.on('end', function () {
+        try {
+          var stations = JSON.parse(str).filter(function (a) {return a.modeName = "tube"});
+        } catch (e) {
+          console.log("TfL rate limit exceeded");
+          return;
+        }
+        console.log(stations);
+        //northernTrains.sort(function (a,b){return a.timeToStation - b.timeToStation});
+        //socket.emit('newArrivalPrediction', northernTrains);
       });
     }
 
@@ -88,5 +127,5 @@ io.sockets.on('connection', function(socket) {
 
 var options = {
   host: 'api.tfl.gov.uk',
-  path: '/StopPoint/940GZZLUMGT/Arrivals?app_id=f42bd7dc&app_key=87030b99a4ddd2b8dad24249d6119456'
+  path: '/StopPoint/940GZZLUMGT/Arrivals?app_id=f42bd7dc&app_key=a1bb31ec35c0148a84f5de064202c479'
 };
