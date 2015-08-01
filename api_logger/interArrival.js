@@ -12,7 +12,7 @@ exports.getTubeServiceData = function () {
     interTrainDeparture : interTrainDeparture,
     arrivingVehicleId   : arrivingVehicleId,
     trainDwellTime      : trainDwellTime,
-    incomingTrain       : incomingTrain
+    nextTrainIn         : nextTrainIn
   };
   return res;
 }
