@@ -2,9 +2,9 @@ var https = require("https");
 var fs = require('fs');
 var interTrainDeparture = [];
 var arrivingVehicleId = [];
-var trainDwellTime = [20, 20, 20, 20, 20, 20, 20, 20];
+var trainDwellTime = [];
 var nextTrainIn;
-var incomingTrain;
+var incomingTrain; // If train is a new incoming train (false: recorded on platform)
 
 
 // Load from "persistent" storage upon startup
@@ -13,12 +13,13 @@ fs.readFile('./Tubepredictor/api_logger/log.txt', function (err, data) {
   var parsedData = JSON.parse(data);
   interTrainDeparture = parsedData.interTrainDeparture;
   arrivingVehicleId = parsedData.arrivingVehicleId;
+  trainDwellTime = parsedData.trainDwellTime;
 });
 
 //var interTrainDeparture = [180, 180, 180, 180, 180, 180, 180, 180];
 //var arrivingVehicleId = [0, 0, 0, 0, 0, 0, 0, 0];
 var lastDeparture = Date.now()-170000;
-var lastArrival = Date.now()-170000;
+var lastArrival = Date.now();
 
 //The url we want is: 'www.random.org/integers/?num=1&min=1&max=10&col=1&base=10&format=plain&rnd=new'
 var options = {
