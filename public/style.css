@@ -19,7 +19,6 @@ body {
 .alert {
   width:250px;
   position: relative;
-  margin-left: -250px;
 }
 
 .my_block {
