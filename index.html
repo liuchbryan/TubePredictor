@@ -23,9 +23,10 @@
   <div class="tubeClock"></div>
   <script>
   var socket = io.connect('http://localhost:8080');
+  var clock;
 
   $(function() {
-    var clock = $('.tubeClock').FlipClock(3600, {
+    clock = $('.tubeClock').FlipClock(3600, {
       countdown: true,
       clockFace: 'MinuteCounter'
     });
