@@ -30,10 +30,14 @@ io.sockets.on('connection', function(socket) {
       //the whole response has been recieved, so we return it
       response.on('end', function () {
         var timeData = JSON.parse(str);
-        timeData.sort(function (a,b){return a.timeToStation - b.timeToStation});
-        console.log(timeData);
-        socket.emit('newTubeTime', timeData[0].timeToStation);
-        console.log('Sending tube time...'+timeData[0].timeToStation);
+        var northernTrains = timeData.filter(function (a){
+          var rc = (a.lineId ==="northern" && a.direction==="outbound");
+          return rc;
+          })
+        northernTrains.sort(function (a,b){return a.timeToStation - b.timeToStation});
+        //console.log(timeData);
+        socket.emit('newTubeTime', northernTrains[0].timeToStation);
+        console.log('Sending tube time...'+northernTrains[0].timeToStation);
       });
     }
 
@@ -57,7 +61,14 @@ io.sockets.on('connection', function(socket) {
 
       //the whole response has been recieved, so we return it
       response.on('end', function () {
-        socket.emit('newArrivalPrediction', JSON.parse(str));
+        var timeData = JSON.parse(str);
+        var northernTrains = timeData.filter(function (a){
+          var rc = (a.lineId ==="northern" && a.direction==="outbound");
+          return rc;
+          })
+        console.log(northernTrains.length);
+        northernTrains.sort(function (a,b){return a.timeToStation - b.timeToStation});
+        socket.emit('newArrivalPrediction', northernTrains);
       });
     }
 

@@ -46,7 +46,7 @@ socket.on('newArrivalPrediction', function(data) {
 setInterval(function() {
   socket.emit('getTubeTime', "Moorgate");
   socket.emit('getArrivalPrediction', "Moorgate");
-}, 10000);
+}, 5000);
 
 socket.emit('getTubeTime', "Moorgate");
 socket.emit('getArrivalPrediction', "Moorgate");
