@@ -478,6 +478,7 @@ function drawChart() {
             categories: xData
         },
         yAxis: {
+            min: 0,
             title: {
                 text: 'Interval between tube arrivals (sec)'
             },
