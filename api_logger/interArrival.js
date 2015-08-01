@@ -61,9 +61,12 @@ callback = function(response) {
   });
 }
 
+exports.getInterArrivals = function() {
+  return interTrainDeparture;
+}
 
 
-function populateInterDepatureTime () {
+function populateInterDepatureTime() {
   console.log('----------------')
   var options_moorgate = {
     host: 'api.tfl.gov.uk',
@@ -80,4 +83,4 @@ function populateInterDepatureTime () {
 }
 
 //https.request(options, callback).end();
-setInterval(populateInterDepartureTime,10000)
+setInterval(populateInterDepatureTime,10000)

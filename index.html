@@ -13,7 +13,7 @@
   <script>
   var socket = io.connect('http://localhost:8080');
   socket.on('connect', function(){
-    alert("Session started!");
+    //alert("Session started!");
   });
 
   $(function(){
@@ -38,6 +38,9 @@
     console.log(data);
   });
 
+  socket.on('newInterArrivalTimes', function(interArrivalTimes) {
+    console.log("interArrivalTimes: %o", interArrivalTimes);
+  });
 
   var clock = $('.clock').FlipClock(3600, {
     countdown: true
