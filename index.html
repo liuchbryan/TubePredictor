@@ -7,15 +7,29 @@
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="http://cdn.theericmiller.com/flipclock.min.js"></script>
-  <link rel="stylesheet" href="/assets/css/flipclock.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="/flipclock/js/flipclock.min.js"></script>
+  <link rel="stylesheet" href="/flipclock/css/flipclock.css">
+
+</head>
+<body>
+  <div class="container">
+    <h1>Tube Predictor</h1>
+  </div>
+  <button type="button" id="getTime" class="btn btn-default">Get Tube Time</button>
+  <button type="button" id="getPrediction" class="btn btn-default">Get Tube Prediction</button>
+  <div class="container" id="timeValue">
+  </div>
+  <div class="tubeClock"></div>
   <script>
   var socket = io.connect('http://localhost:8080');
 
-  var clock = $('.tubeClock').FlipClock(3600, {
-    countdown: true,
-    clockFace: 'MinuteCounter'
+  $(function() {
+    var clock = $('.tubeClock').FlipClock(3600, {
+      countdown: true,
+      clockFace: 'MinuteCounter'
+    });
+
   });
 
   socket.on('connect', function(){
@@ -45,18 +59,6 @@
     console.log(data);
   });
 
-
-
   </script>
-</head>
-<body>
-  <div class="container">
-    <h1>Tube Predictor</h1>
-  </div>
-  <button type="button" id="getTime" class="btn btn-default">Get Tube Time</button>
-  <button type="button" id="getPrediction" class="btn btn-default">Get Tube Prediction</button>
-  <div class="container" id="timeValue">
-  </div>
-  <div class="tubeClock"></div>
 </body>
 </html>

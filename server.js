@@ -12,6 +12,8 @@ app.get('', function(req,res) {
   res.sendFile(__dirname + '/index.html');
 });
 
+app.use(express.static('public'));
+
 io.sockets.on('connection', function(socket) {
 
   console.log('Tube predictor started...');
