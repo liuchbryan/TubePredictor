@@ -10,8 +10,9 @@
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="http://cdn.theericmiller.com/flipclock.min.js"></script>
-  <link rel="stylesheet" href="/assets/css/flipclock.css">
+<!--  <script src="http://cdn.theericmiller.com/flipclock.min.js"></script>
+  <link rel="stylesheet" href="/assets/css/flipclock.css">-->
+
   <script>
 /*  var socket = io.connect('http://localhost:8080');
   socket.on('connect', function(){
@@ -51,6 +52,7 @@
   <script src="/flipclock/js/flipclock.min.js"></script>
   <script src="script.js"></script>
   <link rel="stylesheet" href="/flipclock/css/flipclock.css">
+  <script src="/typeahead/typeahead.bundle.min.js"></script>
 
 </head>
 <body>
@@ -60,20 +62,21 @@
       <h1>Tube Predictor</h1>
       <br>
       <div class="container" id="notification"></div>
+      <br>
       <div class="tubeClock"></div>
+      <br>
+      <div id="the-basics">
+        <input class="typeahead" type="text" placeholder="Select tube station">
+      </div>
       <!--<button type="button" id="getTime" class="btn btn-default">Get Tube Time</button>
       <button type="button" id="getPrediction" class="btn btn-default">Get Tube Prediction</button>-->
       <!--<button type="button" id="guest" class="btn btn-block my_btn" value="">Continue</button>-->
     </div>
   </div>
 
-  <div class="container">
-
-  </div>
+  <div class="container"></div>
 
   <div class="container" id="timeValue"></div>
-
-
 
   <div class="container" id="log"></div>
 </body>
