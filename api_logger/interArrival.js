@@ -8,7 +8,7 @@ var incomingTrain; // If train is a new incoming train (false: recorded on platf
 
 
 // Load from "persistent" storage upon startup
-fs.readFile('./Tubepredictor/api_logger/log.txt', function (err, data) {
+fs.readFile('./api_logger/log.txt', function (err, data) {
   if (err) throw err;
   var parsedData = JSON.parse(data);
   interTrainDeparture = parsedData.interTrainDeparture;
@@ -94,7 +94,7 @@ callback = function(response) {
                          "interTrainDeparture": interTrainDeparture,
                          "trainDwellTime": trainDwellTime});
       console.log(dataToWrite);
-      fs.writeFile('./TubePredictor/api_logger/log.txt', dataToWrite, function (err) {
+      fs.writeFile('./api_logger/log.txt', dataToWrite, function (err) {
         if (err) return console.log(err);
         //console.log('dataToWrite > log.txt');
       });
