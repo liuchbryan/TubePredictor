@@ -66,6 +66,7 @@ socket.on('newTubeTime', function(time) {
       ++delay_count;
       if (clock.getTime() - first_train > 50 || delay_count > 8) {
         document.getElementById("notification").innerHTML = "<div class='alert alert-warning'><strong>Delay detected!</strong></div>";
+        delay.clock()
       }
     }
   }
