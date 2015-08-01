@@ -1,4 +1,4 @@
-var socket = io.connect('http://localhost:8080');
+var socket = io.connect('tubepredictor.duckdns.org');
 var clock;
 var current_time = 1000;
 var showing_first_train = true;
@@ -54,6 +54,7 @@ socket.on('newTubeTime', function(time) {
     }
   } else {
     showing_first_train = true;
+    document.getElementById("notification").innerHTML = "";
     if (Math.abs(first_train - current_time) > 10) {
       current_time = first_train;
       clock.stop();
@@ -65,6 +66,7 @@ socket.on('newTubeTime', function(time) {
       ++delay_count;
       if (clock.getTime() - first_train > 50 || delay_count > 8) {
         document.getElementById("notification").innerHTML = "<div class='alert alert-warning'><strong>Delay detected!</strong></div>";
+        delay.clock()
       }
     }
   }
@@ -451,7 +453,18 @@ socket.on('newArrivalPrediction', function(data) {
 setInterval(function() {
   socket.emit('getTubeTime', "Moorgate");
   socket.emit('getArrivalPrediction', "Moorgate");
-}, 5000);
+}, 20000);
 
 socket.emit('getTubeTime', "Moorgate");
 socket.emit('getArrivalPrediction', "Moorgate");
+
+navigator.geolocation.getCurrentPosition(getNearestStation);
+
+function getNearestStation (position) {
+  var lat = position.coords.latitude;
+  var long = position.coords.longitude;
+
+  socket.emit('getNearestStation', {lat:lat, long:long});
+
+  console.log("Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude);
+}

@@ -1,4 +1,4 @@
-var port = 8080;
+var port = 80;
 var express = require('express');
 var app = express();
 var http = require('http');
@@ -22,9 +22,9 @@ io.sockets.on('connection', function(socket) {
 
   console.log('Tube predictor started...');
 
-  socket.on('getInterArrivalTimes', function(args) {
-    var interArrivalTimes = interArrival.getInterArrivals();
-    socket.emit('newInterArrivalTimes', interArrivalTimes);
+  socket.on('getTubeServiceData', function(args) {
+    var tubeServiceData = interArrival.getTubeServiceData();
+    socket.emit('newTubeServiceData', tubeServiceData);
   });
 
   socket.on('getTubeTime', function(station) {
@@ -74,10 +74,34 @@ io.sockets.on('connection', function(socket) {
         var northernTrains = timeData.filter(function (a){
           var rc = (a.lineId ==="northern" && a.direction==="outbound");
           return rc;
-          })
-        console.log(northernTrains.length);
+        })
         northernTrains.sort(function (a,b){return a.timeToStation - b.timeToStation});
         socket.emit('newArrivalPrediction', northernTrains);
+      });
+    }
+
+    https.request(options, callback).end();
+  });
+
+  socket.on('getNearestStation', function (args) {
+    var options = {
+      host: 'api.tfl.gov.uk',
+      path: '/Place?lat='+args.lat+'&lon='+args.long+'&radius=1000&app_key=a1bb31ec35c0148a84f5de064202c479'
+    };
+    callback = function(response) {
+      var str = '';
+
+      //another chunk of data has been recieved, so append it to `str`
+      response.on('data', function (chunk) {
+        str += chunk;
+      });
+
+      //the whole response has been recieved, so we return it
+      response.on('end', function () {
+        var stations = JSON.parse(str).filter(function (a) {return a.modeName = "tube"});
+        console.log(stations);
+        //northernTrains.sort(function (a,b){return a.timeToStation - b.timeToStation});
+        //socket.emit('newArrivalPrediction', northernTrains);
       });
     }
 

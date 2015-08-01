@@ -7,6 +7,16 @@ var nextTrainIn;
 var incomingTrain; // If train is a new incoming train (false: recorded on platform)
 
 
+exports.getTubeServiceData = function () {
+  var res = {
+    interTrainDeparture : interTrainDeparture,
+    arrivingVehicleId   : arrivingVehicleId,
+    trainDwellTime      : trainDwellTime,
+    incomingTrain       : incomingTrain
+  };
+  return res;
+}
+
 // Load from "persistent" storage upon startup
 fs.readFile('./api_logger/log.txt', function (err, data) {
   if (err) throw err;
@@ -57,13 +67,13 @@ callback = function(response) {
 
   //the whole response has been recieved, so we just print it out here
   response.on('end', function () {
-    
+
     var data = (JSON.parse(str)).filter(isNorthernNorthbound);
 
     var firstTrain = data.sort(compareArrivalTime)[0];
     //console.log('First train: ' + firstTrain.vehicleId)
     if (arrivingVehicleId[7] != firstTrain.vehicleId) {
-      
+
       // Drop the inter-train departure time 8 trains in the past
       // Add the latest one
       lastInterTrainDeparture = Math.floor((Date.now() - lastDeparture)/1000);
@@ -77,12 +87,12 @@ callback = function(response) {
 
       arrivingVehicleId.shift()
       arrivingVehicleId.push(firstTrain.vehicleId);
-      
+
       incomingTrain = true;
     }
 
     // Dwelling time
-    if ((firstTrain.currentLocation == 'At Platform' ||  
+    if ((firstTrain.currentLocation == 'At Platform' ||
          firstTrain.timeToStation == 0) && incomingTrain) {
       lastArrival = Date.now();
       incomingTrain = false;
@@ -121,9 +131,9 @@ function populateInterDepartureTime () {
   //  host: 'api.tfl.gov.uk',
   //  path: '/StopPoint/' + old_street + '/Arrivals?app_id=' + app_id + '&app_key=' + app_key
   //}
-  //https.request(options_old_street, callback).end();  
+  //https.request(options_old_street, callback).end();
 }
 
 
 //https.request(options, callback).end();
-setInterval(populateInterDepartureTime,5000)
+setInterval(populateInterDepartureTime,20000)
