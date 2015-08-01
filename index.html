@@ -19,8 +19,18 @@
        });
      });
 
+     $(function(){
+      $('#getPrediction').click( function() {
+        socket.emit('getArrivalPrediction', "Moorgate");
+      });
+    });
+
       socket.on('newTubeTime', function(time) {
         document.getElementById('timeValue').innerHTML = time;
+      });
+
+      socket.on('newArrivalPrediction', function(data) {
+        console.log(data);
       });
 
     </script>
@@ -30,6 +40,7 @@
       <h1>Tube Predictor</h1>
     </div>
      <button type="button" id="getTime" class="btn btn-default">Get Tube Time</button>
+     <button type="button" id="getPrediction" class="btn btn-default">Get Tube Prediction</button>
     <div class="container" id="timeValue">
     </div>
   </body>
