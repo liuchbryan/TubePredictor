@@ -469,7 +469,10 @@ function drawChart() {
         },
         title: {
             text: 'Recent Tube Arrivals',
-            x: -20 //center
+            x: 0, //center
+            style: {
+              color: '#0099CC'
+            }
         },
         xAxis: {
             categories: xData
@@ -481,7 +484,9 @@ function drawChart() {
             plotLines: [{
                 value: 0,
                 width: 1,
-                color: '#0099CC'
+                style: {
+                  color: '#0099CC'
+                }
             }]
         },
         legend: {
