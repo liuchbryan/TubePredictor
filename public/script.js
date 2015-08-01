@@ -82,10 +82,57 @@ socket.on('newArrivalPrediction', function(data) {
   //document.getElementById('log').innerHTML = data[0];
 });
 
+socket.emit('getTubeTime', "Moorgate");
+socket.emit('getArrivalPrediction', "Moorgate");
+
+function drawChart() {
+    socket.emit('getTubeServiceData');
+    socket.on('newTubeServiceData', function(data) {
+      var dataLength = data.interTrainDeparture.lenght;
+      console.log(dataLength);
+      var xData;
+      for (var i = 1; i <= dataLength; i++) {
+        xData.push(i);
+      }
+
+      $('#chart').highcharts({
+        title: {
+            text: 'Recent Tube Arrivals',
+            x: -20 //center
+        },
+        xAxis: {
+            categories: xData
+        },
+        yAxis: {
+            title: {
+                text: 'Interval between tube arrivals (sec)'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        legend: {
+          enabled : false
+        },
+        tooltip: {
+            valueSuffix: 'sec'
+        },
+        series: [{
+            //name: 'Tokyo',
+            data: data.interTrainDeparture
+        }]
+      });
+    });
+}
+
 setInterval(function() {
   socket.emit('getTubeTime', "Moorgate");
   socket.emit('getArrivalPrediction', "Moorgate");
 }, 5000);
 
-socket.emit('getTubeTime', "Moorgate");
-socket.emit('getArrivalPrediction', "Moorgate");
+setInterval(function() {
+  drawChart();
+}, 15000);
+drawChart();
