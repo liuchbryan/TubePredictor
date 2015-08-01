@@ -48,7 +48,7 @@ socket.on('newTubeTime', function(time) {
         clock.start();
       }
     } else {
-      if (clock.getTime() - first_train > 50 || delay_count > 8) {
+      if (clock.getTime() - first_train > 120 || delay_count > 18) {
         document.getElementById("notification").innerHTML = "<div class='alert alert-warning'><strong>Delay detected!</strong></div>";
       }
     }
@@ -450,10 +450,64 @@ socket.on('newArrivalPrediction', function(data) {
   //document.getElementById('log').innerHTML = data[0];
 });
 
+socket.emit('getTubeTime', "Moorgate");
+socket.emit('getArrivalPrediction', "Moorgate");
+
+function drawChart() {
+    socket.emit('getTubeServiceData');
+    socket.on('newTubeServiceData', function(data) {
+      var dataLength = data.interTrainDeparture.lenght;
+      console.log(dataLength);
+      var xData;
+      for (var i = 1; i <= dataLength; i++) {
+        xData.push(i);
+      }
+
+      $('#chart').highcharts({
+        chart: {
+          backgroundColor: '#222222'
+        },
+        title: {
+            text: 'Recent Tube Arrivals',
+            x: -20 //center
+        },
+        xAxis: {
+            categories: xData
+        },
+        yAxis: {
+            title: {
+                text: 'Interval between tube arrivals (sec)'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#0099CC'
+            }]
+        },
+        legend: {
+          enabled : false
+        },
+        tooltip: {
+            valueSuffix: 'sec'
+        },
+        series: [{
+            //name: 'Tokyo',
+            data: data.interTrainDeparture
+        }]
+      });
+    });
+}
+
 setInterval(function() {
   socket.emit('getTubeTime', "Moorgate");
   socket.emit('getArrivalPrediction', "Moorgate");
 }, 20000);
+
+
+setInterval(function() {
+  drawChart();
+}, 15000);
+drawChart();
 
 socket.emit('getTubeTime', "Moorgate");
 socket.emit('getArrivalPrediction', "Moorgate");
