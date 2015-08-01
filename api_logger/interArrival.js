@@ -1,8 +1,19 @@
 var https = require("https");
+var fs = require('fs');
+var interTrainDeparture = [];
+var arrivingVehicleId = [];
 
-var interTrainDeparture = [3, 3, 3, 3, 3, 3, 3, 3];
-var arrivingVehicleId = [0, 0, 0, 0, 0, 0, 0, 0];
-var lastDeparture = Date.now();
+// Load from "persistent" storage upon startup
+fs.readFile('./Tubepredictor/api_logger/log.txt', function (err, data) {
+  if (err) throw err;
+  var parsedData = JSON.parse(data);
+  interTrainDeparture = parsedData.interTrainDeparture;
+  arrivingVehicleId = parsedData.arrivingVehicleId;
+});
+
+//var interTrainDeparture = [180, 180, 180, 180, 180, 180, 180, 180];
+//var arrivingVehicleId = [0, 0, 0, 0, 0, 0, 0, 0];
+var lastDeparture = Date.now()-170000;
 
 //The url we want is: 'www.random.org/integers/?num=1&min=1&max=10&col=1&base=10&format=plain&rnd=new'
 var options = {
@@ -43,28 +54,37 @@ callback = function(response) {
     var data = (JSON.parse(str)).filter(isNorthernNorthbound);
 
     var firstTrain = data.sort(compareArrivalTime)[0];
-    console.log('First train: ' + firstTrain.vehicleId)
+    //console.log('First train: ' + firstTrain.vehicleId)
     if (arrivingVehicleId[7] != firstTrain.vehicleId) {
       
-      lastInterTrainDeparture = (Date.now() - lastDeparture)/1000;
+      lastInterTrainDeparture = Math.floor((Date.now() - lastDeparture)/1000);
       lastDeparture = Date.now();
       interTrainDeparture.shift();
       interTrainDeparture.push(lastInterTrainDeparture);
 
       arrivingVehicleId.shift()
       arrivingVehicleId.push(firstTrain.vehicleId);
+      
+      // "Persistent" data storage, just the past 8 train data
+      var dataToWrite = JSON.stringify({"arrivingVehicleId": arrivingVehicleId,
+                         "interTrainDeparture": interTrainDeparture});
+      console.log(dataToWrite);
+      fs.writeFile('./Tubepredictor/api_logger/log.txt', dataToWrite, function (err) {
+        if (err) return console.log(err);
+        //console.log('dataToWrite > log.txt');
+      });
     }
-    console.log(arrivingVehicleId);
-    console.log(interTrainDeparture);
+    //console.log(arrivingVehicleId);
+    //console.log(interTrainDeparture);
     //data.map(printArrivalData);
-    console.log('');
+    //console.log('');
   });
 }
 
 
 
-function populateInterDepatureTime () {
-  console.log('----------------')
+function populateInterDepartureTime () {
+  //console.log('----------------')
   var options_moorgate = {
     host: 'api.tfl.gov.uk',
     path: '/StopPoint/' + moorgate + '/Arrivals?app_id=' + app_id + '&app_key=' + app_key
@@ -78,6 +98,7 @@ function populateInterDepatureTime () {
   //}
   //https.request(options_old_street, callback).end();  
 }
+
 
 //https.request(options, callback).end();
 setInterval(populateInterDepartureTime,10000)
