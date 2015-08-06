@@ -1,4 +1,4 @@
-var socket = io.connect('tubepredictor.duckdns.org');
+var socket = io.connect('localhost:8080');
 var clock;
 var current_time = 1000;
 var showing_first_train = true;
@@ -454,9 +454,8 @@ socket.emit('getTubeTime', "Moorgate");
 socket.emit('getArrivalPrediction', "Moorgate");
 
 function drawChart() {
-    socket.emit('getTubeServiceData');
     socket.on('newTubeServiceData', function(data) {
-      var dataLength = data.interTrainDeparture.lenght;
+      var dataLength = data.interTrainDeparture.length;
       console.log(dataLength);
       var xData = [];
       for (var i = 1; i <= dataLength; i++) {
@@ -528,3 +527,5 @@ function getNearestStation (position) {
 
   console.log("Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude);
 }
+
+socket.emit('getTubeServiceData');
