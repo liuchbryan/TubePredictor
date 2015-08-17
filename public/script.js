@@ -71,10 +71,6 @@ socket.on('newTubeTime', function(time) {
     }
   }
 
-  //if (clock.getTime() -)
-
-
-  //clock.start();
 });
 
 $(document).ready(function() {
@@ -102,17 +98,122 @@ $(document).ready(function() {
     };
   };
 
-  var states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
-    'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii',
-    'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
-    'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
-    'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
-    'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
-    'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
-    'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
-    'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
-  ];
-  var tubeStations = [
+  $('#the-basics .typeahead').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 1
+  },
+  {
+    name: 'tubes',
+    source: substringMatcher(tubeStations)
+  });
+
+});
+
+
+socket.on('newArrivalPrediction', function(data) {
+  console.log(data[0]);
+  //document.getElementById('log').innerHTML = data[0];
+});
+
+function drawChart() {
+    socket.on('newTubeServiceData', function(data) {
+      var dataLength = data.interTrainDeparture.length;
+      console.log(dataLength);
+      var xData = [];
+      for (var i = 1; i <= dataLength; i++) {
+        xData.push(i);
+      }
+
+      $('#chart').highcharts({
+        chart: {
+          backgroundColor: '#222222'
+        },
+        title: {
+            text: 'Recent Tube Arrivals',
+            x: 0, //center
+            style: {
+              color: '#0099CC'
+            }
+        },
+        xAxis: {
+            categories: xData
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Interval between tube arrivals (sec)'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                style: {
+                  color: '#0099CC'
+                }
+            }]
+        },
+        legend: {
+          enabled : false
+        },
+        tooltip: {
+            valueSuffix: 'sec'
+        },
+        series: [{
+            //name: 'Tokyo',
+            data: data.interTrainDeparture
+        }]
+      });
+    });
+}
+
+setInterval(function() {
+  socket.emit('getTubeTime', {
+    station : "Moorgate",
+    line : "Northern",
+    direction : "Outbound",
+  });
+  /*socket.emit('getArrivalPrediction', {
+    station : "Moorgate",
+    line : "Northern",
+    direction : "Outbound",
+  });*/
+}, 5000);
+
+
+setInterval(function() {
+  drawChart();
+}, 15000);
+drawChart();
+
+socket.emit('getTubeTime', {
+  station : "Moorgate",
+  line : "Northern",
+  direction : "Outbound",
+});
+socket.emit('getArrivalPrediction', {
+  station : "Moorgate",
+  line : "Northern",
+  direction : "Outbound",
+});
+
+navigator.geolocation.getCurrentPosition(getNearestStation);
+
+function getNearestStation (position) {
+  var lat = position.coords.latitude;
+  var long = position.coords.longitude;
+
+  socket.emit('getNearestStation', {lat:lat, long:long});
+
+  console.log("Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude);
+}
+
+socket.emit('getTubeServiceData');
+
+
+///////////////////
+// TUBE STATIONS //
+///////////////////
+var tubeStations = [
   "Acton Town",
   "Aldgate",
   "Aldgate East",
@@ -430,115 +531,4 @@ $(document).ready(function() {
   "Wood Green",
   "Woodford",
   "Woodside Park"
-  ];
-
-  $('#the-basics .typeahead').typeahead({
-    hint: true,
-    highlight: true,
-    minLength: 1
-  },
-  {
-    name: 'states',
-    source: substringMatcher(tubeStations)
-  });
-
-});
-
-
-socket.on('newArrivalPrediction', function(data) {
-  console.log(data[0]);
-  //document.getElementById('log').innerHTML = data[0];
-});
-
-function drawChart() {
-    socket.on('newTubeServiceData', function(data) {
-      var dataLength = data.interTrainDeparture.length;
-      console.log(dataLength);
-      var xData = [];
-      for (var i = 1; i <= dataLength; i++) {
-        xData.push(i);
-      }
-
-      $('#chart').highcharts({
-        chart: {
-          backgroundColor: '#222222'
-        },
-        title: {
-            text: 'Recent Tube Arrivals',
-            x: 0, //center
-            style: {
-              color: '#0099CC'
-            }
-        },
-        xAxis: {
-            categories: xData
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: 'Interval between tube arrivals (sec)'
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                style: {
-                  color: '#0099CC'
-                }
-            }]
-        },
-        legend: {
-          enabled : false
-        },
-        tooltip: {
-            valueSuffix: 'sec'
-        },
-        series: [{
-            //name: 'Tokyo',
-            data: data.interTrainDeparture
-        }]
-      });
-    });
-}
-
-setInterval(function() {
-  socket.emit('getTubeTime', {
-    station : "Moorgate",
-    line : "Northern",
-    direction : "Outbound",
-  });
-  /*socket.emit('getArrivalPrediction', {
-    station : "Moorgate",
-    line : "Northern",
-    direction : "Outbound",
-  });*/
-}, 5000);
-
-
-setInterval(function() {
-  drawChart();
-}, 15000);
-drawChart();
-
-socket.emit('getTubeTime', {
-  station : "Moorgate",
-  line : "Northern",
-  direction : "Outbound",
-});
-socket.emit('getArrivalPrediction', {
-  station : "Moorgate",
-  line : "Northern",
-  direction : "Outbound",
-});
-
-navigator.geolocation.getCurrentPosition(getNearestStation);
-
-function getNearestStation (position) {
-  var lat = position.coords.latitude;
-  var long = position.coords.longitude;
-
-  socket.emit('getNearestStation', {lat:lat, long:long});
-
-  console.log("Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude);
-}
-
-socket.emit('getTubeServiceData');
+];
