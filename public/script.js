@@ -450,9 +450,6 @@ socket.on('newArrivalPrediction', function(data) {
   //document.getElementById('log').innerHTML = data[0];
 });
 
-socket.emit('getTubeTime', "Moorgate");
-socket.emit('getArrivalPrediction', "Moorgate");
-
 function drawChart() {
     socket.on('newTubeServiceData', function(data) {
       var dataLength = data.interTrainDeparture.length;
@@ -504,9 +501,17 @@ function drawChart() {
 }
 
 setInterval(function() {
-  socket.emit('getTubeTime', "Moorgate");
-  socket.emit('getArrivalPrediction', "Moorgate");
-}, 20000);
+  socket.emit('getTubeTime', {
+    station : "Moorgate",
+    line : "Northern",
+    direction : "Outbound",
+  });
+  /*socket.emit('getArrivalPrediction', {
+    station : "Moorgate",
+    line : "Northern",
+    direction : "Outbound",
+  });*/
+}, 5000);
 
 
 setInterval(function() {
@@ -514,8 +519,16 @@ setInterval(function() {
 }, 15000);
 drawChart();
 
-socket.emit('getTubeTime', "Moorgate");
-socket.emit('getArrivalPrediction', "Moorgate");
+socket.emit('getTubeTime', {
+  station : "Moorgate",
+  line : "Northern",
+  direction : "Outbound",
+});
+socket.emit('getArrivalPrediction', {
+  station : "Moorgate",
+  line : "Northern",
+  direction : "Outbound",
+});
 
 navigator.geolocation.getCurrentPosition(getNearestStation);
 

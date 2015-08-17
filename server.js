@@ -5,6 +5,15 @@ var http = require('http');
 var https = require("https");
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
+var tfl_data = {};
+var station_lookup = {};
+
+var moorgate = {
+  station : "Moorgate",
+  line : "Northern",
+  direction : "Outbound",
+};
+station_lookup[JSON.stringify(moorgate)] = "/StopPoint/940GZZLUMGT/Arrivals?app_id=f42bd7dc&app_key=a1bb31ec35c0148a84f5de064202c479";
 
 // module for accessing the data about the interval between train arrivals
 var interArrival = require('./api_logger/interArrival.js');
@@ -28,7 +37,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('getTubeTime', function(station) {
-    callback = function(response) {
+    /*callback = function(response) {
       var str = '';
 
       //another chunk of data has been recieved, so append it to `str`
@@ -53,6 +62,7 @@ io.sockets.on('connection', function(socket) {
         socket.emit('newTubeTime', [northernTrains[0].timeToStation, northernTrains[1].timeToStation]);
         console.log('Sending tube time...'+northernTrains[0].timeToStation);
       });
+
     }
 
     https.request(options, callback).end();
@@ -60,12 +70,14 @@ io.sockets.on('connection', function(socket) {
     //var time = 180;
 
 
-    //socket.emit('newTubeTime', time);
-
+    //socket.emit('newTubeTime', time);*/
+    console.log(station);
+    var times = tfl_data[JSON.stringify(station)];
+    socket.emit('newTubeTime', [times[0].timeToStation, times[1].timeToStation]);
   });
 
   socket.on('getArrivalPrediction', function(args) {
-    callback = function(response) {
+    /*callback = function(response) {
       var str = '';
 
       //another chunk of data has been recieved, so append it to `str`
@@ -90,7 +102,7 @@ io.sockets.on('connection', function(socket) {
       });
     }
 
-    https.request(options, callback).end();
+    https.request(options, callback).end();*/
   });
 
   socket.on('getNearestStation', function (args) {
@@ -125,7 +137,51 @@ io.sockets.on('connection', function(socket) {
 
 });
 
-var options = {
-  host: 'api.tfl.gov.uk',
-  path: '/StopPoint/940GZZLUMGT/Arrivals?app_id=f42bd7dc&app_key=a1bb31ec35c0148a84f5de064202c479'
-};
+// var options = {
+//   host: 'api.tfl.gov.uk',
+//   path: '/StopPoint/940GZZLUMGT/Arrivals?app_id=f42bd7dc&app_key=a1bb31ec35c0148a84f5de064202c479'
+// };
+
+var process_response = function(key, response) {
+  var str = '';
+
+  //another chunk of data has been recieved, so append it to `str`
+  response.on('data', function (chunk) {
+    str += chunk;
+  });
+
+  //the whole response has been recieved, so we just print it out here
+  response.on('end', function () {
+    try {
+      var data = JSON.parse(str).filter(function (a) {return a.modeName = "tube"});
+    } catch (e) {
+      console.log("TfL rate limit exceeded");
+    }
+    data.sort(function (a,b){return a.timeToStation - b.timeToStation});
+    tfl_data[key] = data;
+    //console.log(data);
+    //console.log(data[0].currentLocation+" "+data[0].timeToStation);
+    //console.log(tfl_data);
+  });
+}
+
+
+
+function getAPI () {
+  console.log("getAPI");
+
+  Object.keys(station_lookup).forEach(function(station){
+    console.log("Test");
+    console.log(station);
+    var options = {
+      host: 'api.tfl.gov.uk',
+      path: station_lookup[station]
+    };
+    var callback = process_response.bind(this, station)
+    https.request(options, callback).end();
+  });
+
+}
+
+setInterval(getAPI,10000)
+getAPI();
