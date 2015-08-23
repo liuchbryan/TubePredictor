@@ -41,7 +41,7 @@ socket.on('newTubeTime', function(time) {
       delay_count = 0;
       showing_first_train = false;
     }
-    document.getElementById("notification").innerHTML = "<div class='alert alert-warning'><strong>A train is currently on the platform!</strong></div>";
+    document.getElementById("notification").innerHTML = "<div class='alert alert-success'><strong>A train is currently on the platform!</strong></div>";
     if (Math.abs(second_train - current_time) > 10) {
       current_time = second_train;
       clock.stop();
@@ -51,7 +51,7 @@ socket.on('newTubeTime', function(time) {
       }
     } else {
       if (clock.getTime() - first_train > 120 || delay_count > 18) {
-        document.getElementById("notification").innerHTML = "<div class='alert alert-warning'><strong>Delay detected!</strong></div>";
+        document.getElementById("notification").innerHTML = "<div class='alert alert-danger'><strong>Delay detected!</strong></div>";
       }
     }
   } else {
@@ -67,7 +67,7 @@ socket.on('newTubeTime', function(time) {
     } else {
       ++delay_count;
       if (clock.getTime() - first_train > 50 || delay_count > 8) {
-        document.getElementById("notification").innerHTML = "<div class='alert alert-warning'><strong>Delay detected!</strong></div>";
+        document.getElementById("notification").innerHTML = "<div class='alert alert-danger'><strong>Delay detected!</strong></div>";
         delay.clock()
       }
     }
