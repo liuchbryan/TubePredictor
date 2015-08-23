@@ -36,19 +36,15 @@
         <input class="typeahead" type="text" placeholder="Select line...">
       </div>
       <br>
-      <div class="btn-group" data-toggle="buttons">
+      <div class="btn-group" data-toggle="buttons" id="direction">
         <label class="btn btn-primary">
-          <input name="direction" type="radio" id="northeast" /><strong>South/Westbound</strong>
+          <input type="radio" id="northeast" class="toggle" value="Inbound"/><strong>South/Westbound</strong>
         </label>
-        <!--<label for="northeast">South/Westbound</label>-->
         <label class="btn btn-primary">
-          <input name="direction" type="radio" id="southwest"><strong>North/Eastbound</strong>
+          <input type="radio" id="southwest" class="toggle" value="Outbound"><strong>North/Eastbound</strong>
         </label>
-      <!--<label for="southwest">North/Eastbound</label>-->
       </div>
-      <!--<button type="button" id="getTime" class="btn btn-default">Get Tube Time</button>
-      <button type="button" id="getPrediction" class="btn btn-default">Get Tube Prediction</button>-->
-      <!--<button type="button" id="guest" class="btn btn-block my_btn" value="">Continue</button>-->
+
       <div class="space" id="chart"></div>
     </div>
   </div>

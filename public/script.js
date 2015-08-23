@@ -5,6 +5,7 @@ var showing_first_train = true;
 var delay_count = 0;
 var selectedStation = 'Moorgate';
 var selectedLine = 'Northern';
+var selectedDirection = 'Outbound';
 
 $(function() {
   clock = $('.tubeClock').FlipClock(3600, {
@@ -16,18 +17,6 @@ $(function() {
 
 socket.on('connect', function(){
 
-});
-
-$(function(){
-  $('#getTime').click( function() {
-    socket.emit('getTubeTime', "Moorgate");
-  });
-});
-
-$(function(){
-  $('#getPrediction').click( function() {
-    socket.emit('getArrivalPrediction', "Moorgate");
-  });
 });
 
 socket.on('newTubeTime', function(time) {
@@ -112,11 +101,11 @@ $(document).ready(function() {
   });
 
   $('#station-select .typeahead').bind('typeahead:select', function (e, suggestion) {
-    socket.emit('typeaheadDebug', suggestion);
+    socket.emit('selectionDebug', suggestion);
     selectedStation = suggestion;
   });
   /*$('#station-select .typeahead').bind('typeahead:cursorchange', function (e, suggestion) {
-    socket.emit('typeaheadDebug', suggestion);
+    socket.emit('selectionDebug', suggestion);
   });*/
 
   // TYPEAHEAD LINE SELECTION
@@ -131,12 +120,11 @@ $(document).ready(function() {
   });
 
   $('#line-select .typeahead').bind('typeahead:select', function (e, suggestion) {
-    socket.emit('typeaheadDebug', suggestion);
+    socket.emit('selectionDebug', suggestion);
     selectedLine = suggestion;
   });
 
 });
-
 
 socket.on('newArrivalPrediction', function(data) {
   console.log(data[0]);
@@ -195,10 +183,17 @@ function drawChart() {
 
 // Gets new tube time every 5 seconds for the currently selected station
 setInterval(function() {
+  // Only update selected direction if radio button has been selected
+  var buttonValue = $('#direction label.active input').val();
+  if (buttonValue != null) {
+    selectedDirection = buttonValue;
+    socket.emit('selectionDebug', selectedDirection);
+  }
+  
   socket.emit('getTubeTime', {
     station : selectedStation,
     line : selectedLine,
-    direction : "Outbound",
+    direction : selectedDirection,
   });
 }, 5000);
 

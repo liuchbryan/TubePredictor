@@ -145,8 +145,8 @@ io.sockets.on('connection', function(socket) {
   });
 
 
-  socket.on('typeaheadDebug', function (selection) {
-    console.log('User selected tube station/line: ' + selection);
+  socket.on('selectionDebug', function (selection) {
+    console.log('User selected tube station/line/direction: ' + selection);
   });
 
 });
