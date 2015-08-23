@@ -8,12 +8,18 @@ var io = require('socket.io').listen(server);
 var tfl_data = {};
 var station_lookup = {};
 
-var moorgate = {
+var moorgate_northern_outbound = {
   station : "Moorgate",
   line : "Northern",
   direction : "Outbound",
 };
-station_lookup[JSON.stringify(moorgate)] = "/StopPoint/940GZZLUMGT/Arrivals?app_id=f42bd7dc&app_key=a1bb31ec35c0148a84f5de064202c479";
+moorgate_northern_inbound = {
+  station : "Moorgate",
+  line : "Northern",
+  direction : "Inbound",
+};
+station_lookup[JSON.stringify(moorgate_northern_outbound)] = "/StopPoint/940GZZLUMGT/Arrivals?app_id=f42bd7dc&app_key=a1bb31ec35c0148a84f5de064202c479";
+station_lookup[JSON.stringify(moorgate_northern_inbound)] = "/StopPoint/940GZZLUMGT/Arrivals?app_id=f42bd7dc&app_key=a1bb31ec35c0148a84f5de064202c479";
 
 // module for accessing the data about the interval between train arrivals
 var interArrival = require('./api_logger/interArrival.js');
@@ -75,8 +81,9 @@ io.sockets.on('connection', function(socket) {
     // Using default station 'moorgate',
     // user selected station is passed in as 'station'
 
-    if (tfl_data[JSON.stringify(moorgate)] != null) {
-      var times = tfl_data[JSON.stringify(moorgate)];
+    if (tfl_data[JSON.stringify(station)] != null) {
+      var times = tfl_data[JSON.stringify(station)];
+      console.log(times);
       if (times[0] != null &&
           times[1] != null) {
         socket.emit('newTubeTime', [times[0].timeToStation, times[1].timeToStation]);
@@ -158,7 +165,7 @@ io.sockets.on('connection', function(socket) {
 
 var process_response = function(key, response) {
   var str = '';
-
+  var station = JSON.parse(key);
   //another chunk of data has been recieved, so append it to `str`
   response.on('data', function (chunk) {
     str += chunk;
@@ -167,7 +174,7 @@ var process_response = function(key, response) {
   //the whole response has been recieved, so we just print it out here
   response.on('end', function () {
     try {
-      var data = JSON.parse(str).filter(function (a) {return a.modeName = "tube"});
+      var data = JSON.parse(str).filter(function (a) {return a.modeName == "tube" && a.direction == station.direction.toLowerCase()});
     } catch (e) {
       console.log("TfL rate limit exceeded");
     }

@@ -3,6 +3,7 @@ var clock;
 var current_time = 1000;
 var showing_first_train = true;
 var delay_count = 0;
+var previousDirection = 'Outbound';
 var selectedStation = 'Moorgate';
 var selectedLine = 'Northern';
 var selectedDirection = 'Outbound';
@@ -24,6 +25,14 @@ socket.on('newTubeTime', function(time) {
   //document.getElementById('timeValue').innerHTML = '<h2>Train leaving in ' + time + ' seconds </h2>';
   var first_train = time[0];
   var second_train = time[1];
+
+  // clear any delay predictions when change directions
+  if (selectedDirection !== previousDirection) {
+    current_time = 1000;
+    showing_first_train = true;
+    delay_count = 0;
+    previousDirection = selectedDirection;
+  }
 
   if (first_train === 0) {
     if (showing_first_train) {
@@ -189,13 +198,13 @@ setInterval(function() {
     selectedDirection = buttonValue;
     socket.emit('selectionDebug', selectedDirection);
   }
-  
+
   socket.emit('getTubeTime', {
     station : selectedStation,
     line : selectedLine,
     direction : selectedDirection,
   });
-}, 5000);
+}, 1000);
 
 
 setInterval(function() {
