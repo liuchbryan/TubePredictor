@@ -72,8 +72,13 @@ io.sockets.on('connection', function(socket) {
 
     //socket.emit('newTubeTime', time);*/
     console.log(station);
-    var times = tfl_data[JSON.stringify(station)];
-    socket.emit('newTubeTime', [times[0].timeToStation, times[1].timeToStation]);
+    // Using default station 'moorgate',
+    // user selected station is passed in as 'station'
+
+    var times = tfl_data[JSON.stringify(moorgate)];
+    if (times !== 'undefined') {
+      socket.emit('newTubeTime', [times[0].timeToStation, times[1].timeToStation]);
+    }
   });
 
   socket.on('getArrivalPrediction', function(args) {
@@ -135,6 +140,11 @@ io.sockets.on('connection', function(socket) {
     https.request(options, callback).end();
   });
 
+
+  socket.on('typeaheadDebug', function (tubeStation) {
+    console.log('User selected tube station: ' + tubeStation);
+  });
+
 });
 
 // var options = {
@@ -183,5 +193,5 @@ function getAPI () {
 
 }
 
-setInterval(getAPI,10000)
+setInterval(getAPI,10000);
 getAPI();

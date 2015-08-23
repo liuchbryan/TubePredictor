@@ -3,6 +3,7 @@ var clock;
 var current_time = 1000;
 var showing_first_train = true;
 var delay_count = 0;
+var selectedStation = 'Moorgate';
 
 $(function() {
   clock = $('.tubeClock').FlipClock(3600, {
@@ -108,6 +109,14 @@ $(document).ready(function() {
     source: substringMatcher(tubeStations)
   });
 
+  $('#the-basics .typeahead').bind('typeahead:select', function (e, suggestion) {
+    socket.emit('typeaheadDebug', suggestion);
+    selectedStation = suggestion;
+  });
+  /*$('#the-basics .typeahead').bind('typeahead:cursorchange', function (e, suggestion) {
+    socket.emit('typeaheadDebug', suggestion);
+  });*/
+
 });
 
 
@@ -166,17 +175,13 @@ function drawChart() {
     });
 }
 
+// Gets new tube time every 5 seconds for the currently selected station
 setInterval(function() {
   socket.emit('getTubeTime', {
-    station : "Moorgate",
+    station : selectedStation,
     line : "Northern",
     direction : "Outbound",
   });
-  /*socket.emit('getArrivalPrediction', {
-    station : "Moorgate",
-    line : "Northern",
-    direction : "Outbound",
-  });*/
 }, 5000);
 
 
