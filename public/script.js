@@ -4,6 +4,7 @@ var current_time = 1000;
 var showing_first_train = true;
 var delay_count = 0;
 var selectedStation = 'Moorgate';
+var selectedLine = 'Northern';
 
 $(function() {
   clock = $('.tubeClock').FlipClock(3600, {
@@ -99,7 +100,8 @@ $(document).ready(function() {
     };
   };
 
-  $('#the-basics .typeahead').typeahead({
+  // TYPEAHEAD TUBE STATION SELECTION
+  $('#station-select .typeahead').typeahead({
     hint: true,
     highlight: true,
     minLength: 1
@@ -109,13 +111,29 @@ $(document).ready(function() {
     source: substringMatcher(tubeStations)
   });
 
-  $('#the-basics .typeahead').bind('typeahead:select', function (e, suggestion) {
+  $('#station-select .typeahead').bind('typeahead:select', function (e, suggestion) {
     socket.emit('typeaheadDebug', suggestion);
     selectedStation = suggestion;
   });
-  /*$('#the-basics .typeahead').bind('typeahead:cursorchange', function (e, suggestion) {
+  /*$('#station-select .typeahead').bind('typeahead:cursorchange', function (e, suggestion) {
     socket.emit('typeaheadDebug', suggestion);
   });*/
+
+  // TYPEAHEAD LINE SELECTION
+  $('#line-select .typeahead').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 1
+  },
+  {
+    name: 'lines',
+    source: substringMatcher(tubeLines)
+  });
+
+  $('#line-select .typeahead').bind('typeahead:select', function (e, suggestion) {
+    socket.emit('typeaheadDebug', suggestion);
+    selectedLine = suggestion;
+  });
 
 });
 
@@ -179,7 +197,7 @@ function drawChart() {
 setInterval(function() {
   socket.emit('getTubeTime', {
     station : selectedStation,
-    line : "Northern",
+    line : selectedLine,
     direction : "Outbound",
   });
 }, 5000);
@@ -214,6 +232,22 @@ function getNearestStation (position) {
 
 socket.emit('getTubeServiceData');
 
+/////////////////
+// TUBES LINES //
+/////////////////
+var tubeLines = [
+  "Bakerloo",
+  "Central",
+  "District",
+  "Hammersmith & City",
+  "Jubilee",
+  "Metropolitan",
+  "Northern",
+  "Piccadilly",
+  "Victoria",
+  "Waterloo & City",
+  "DLR"
+];
 
 ///////////////////
 // TUBE STATIONS //

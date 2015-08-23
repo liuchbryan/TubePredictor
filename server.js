@@ -75,10 +75,14 @@ io.sockets.on('connection', function(socket) {
     // Using default station 'moorgate',
     // user selected station is passed in as 'station'
 
-    var times = tfl_data[JSON.stringify(moorgate)];
-    if (times !== 'undefined') {
-      socket.emit('newTubeTime', [times[0].timeToStation, times[1].timeToStation]);
+    if (tfl_data[JSON.stringify(moorgate)] != null) {
+      var times = tfl_data[JSON.stringify(moorgate)];
+      if (times[0] != null &&
+          times[1] != null) {
+        socket.emit('newTubeTime', [times[0].timeToStation, times[1].timeToStation]);
+      }
     }
+
   });
 
   socket.on('getArrivalPrediction', function(args) {
@@ -141,8 +145,8 @@ io.sockets.on('connection', function(socket) {
   });
 
 
-  socket.on('typeaheadDebug', function (tubeStation) {
-    console.log('User selected tube station: ' + tubeStation);
+  socket.on('typeaheadDebug', function (selection) {
+    console.log('User selected tube station/line: ' + selection);
   });
 
 });
