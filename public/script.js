@@ -140,55 +140,59 @@ socket.on('newArrivalPrediction', function(data) {
   //document.getElementById('log').innerHTML = data[0];
 });
 
-function drawChart() {
-    socket.on('newTubeServiceData', function(data) {
-      var dataLength = data.interTrainDeparture.length;
-      console.log(dataLength);
-      var xData = [];
-      for (var i = 1; i <= dataLength; i++) {
-        xData.push(i);
-      }
+function drawChart(data) {
+    console.log("Drawing graph");
+    var dataLength = data.interTrainDeparture.length;
+    console.log(data);
+    var xData = [];
+    for (var i = 1; i <= dataLength; i++) {
+      xData.push(i);
+    }
 
-      $('#chart').highcharts({
-        chart: {
-          backgroundColor: '#222222'
-        },
-        title: {
-            text: 'Recent Tube Arrivals',
-            x: 0, //center
-            style: {
-              color: '#0099CC'
-            }
-        },
-        xAxis: {
-            categories: xData
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: 'Interval between tube arrivals (sec)'
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                style: {
-                  color: '#0099CC'
-                }
-            }]
-        },
-        legend: {
-          enabled : false
-        },
-        tooltip: {
-            valueSuffix: 'sec'
-        },
-        series: [{
-            //name: 'Tokyo',
-            data: data.interTrainDeparture
-        }]
-      });
+    $('#chart').highcharts({
+      chart: {
+        backgroundColor: '#222222'
+      },
+      title: {
+          text: 'Recent Tube Arrivals',
+          x: 0, //center
+          style: {
+            color: '#0099CC'
+          }
+      },
+      xAxis: {
+          categories: xData
+      },
+      yAxis: {
+          min: 0,
+          title: {
+              text: 'Interval between tube arrivals (sec)'
+          },
+          plotLines: [{
+              value: 0,
+              width: 1,
+              style: {
+                color: '#0099CC'
+              }
+          }]
+      },
+      legend: {
+        enabled : false
+      },
+      tooltip: {
+          valueSuffix: 'sec'
+      },
+      series: [{
+          //name: 'Tokyo',
+          data: data.interTrainDeparture
+      }]
     });
 }
+
+socket.on('newTubeServiceData', function(data) {
+  console.log("Got new data to plot the graph.");
+  drawChart(data);
+});
 
 // Gets new tube time every 5 seconds for the currently selected station
 setInterval(function() {
@@ -208,9 +212,9 @@ setInterval(function() {
 
 
 setInterval(function() {
-  drawChart();
+  socket.emit('getTubeServiceData');
 }, 15000);
-drawChart();
+socket.emit('getTubeServiceData');
 
 socket.emit('getTubeTime', {
   station : "Moorgate",
@@ -233,8 +237,6 @@ function getNearestStation (position) {
 
   console.log("Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude);
 }
-
-socket.emit('getTubeServiceData');
 
 /////////////////
 // TUBES LINES //

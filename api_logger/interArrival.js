@@ -67,11 +67,13 @@ callback = function(response) {
 
   //the whole response has been recieved, so we just print it out here
   response.on('end', function () {
+    //console.log(str);
 
     var data = (JSON.parse(str)).filter(isNorthernNorthbound);
-
+    console.log(data);
     var firstTrain = data.sort(compareArrivalTime)[0];
     //console.log('First train: ' + firstTrain.vehicleId)
+    //console.log(arrivingVehicleId[7]);
     if (arrivingVehicleId[7] != firstTrain.vehicleId) {
 
       // Drop the inter-train departure time 8 trains in the past
@@ -103,7 +105,7 @@ callback = function(response) {
       var dataToWrite = JSON.stringify({"arrivingVehicleId": arrivingVehicleId,
                          "interTrainDeparture": interTrainDeparture,
                          "trainDwellTime": trainDwellTime});
-      console.log(dataToWrite);
+      //console.log(dataToWrite);
       fs.writeFile('./api_logger/log.txt', dataToWrite, function (err) {
         if (err) return console.log(err);
         //console.log('dataToWrite > log.txt');
@@ -136,4 +138,5 @@ function populateInterDepartureTime () {
 
 
 //https.request(options, callback).end();
-setInterval(populateInterDepartureTime,20000)
+setInterval(populateInterDepartureTime, 2000);
+
