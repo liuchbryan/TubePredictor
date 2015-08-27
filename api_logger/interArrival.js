@@ -59,10 +59,10 @@ callback = function(response) {
   }
 
   function printArrivalData(curr, index, array) {
-    console.log(curr.vehicleId + " to " +
-                curr.destinationName + ", arriving in " +
-                curr.timeToStation + " seconds, currently " +
-                curr.currentLocation);
+    // console.log(curr.vehicleId + " to " +
+    //             curr.destinationName + ", arriving in " +
+    //             curr.timeToStation + " seconds, currently " +
+    //             curr.currentLocation);
   }
 
   //the whole response has been recieved, so we just print it out here
@@ -70,7 +70,7 @@ callback = function(response) {
     //console.log(str);
 
     var data = (JSON.parse(str)).filter(isNorthernNorthbound);
-    console.log(data);
+    //console.log(data);
     var firstTrain = data.sort(compareArrivalTime)[0];
     //console.log('First train: ' + firstTrain.vehicleId)
     //console.log(arrivingVehicleId[7]);
@@ -139,4 +139,3 @@ function populateInterDepartureTime () {
 
 //https.request(options, callback).end();
 setInterval(populateInterDepartureTime, 2000);
-

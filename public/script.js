@@ -21,11 +21,11 @@ socket.on('connect', function(){
 });
 
 socket.on('newTubeTime', function(time) {
-
+  //console.log(time);
   //document.getElementById('timeValue').innerHTML = '<h2>Train leaving in ' + time + ' seconds </h2>';
   var first_train = time[0];
   var second_train = time[1];
-
+  console.log(first_train+" "+second_train);
   // clear any delay predictions when change directions
   if (selectedDirection !== previousDirection) {
     current_time = 1000;
@@ -110,7 +110,7 @@ $(document).ready(function() {
   });
 
   $('#station-select .typeahead').bind('typeahead:select', function (e, suggestion) {
-    socket.emit('selectionDebug', suggestion);
+    //socket.emit('selectionDebug', suggestion);
     selectedStation = suggestion;
   });
   /*$('#station-select .typeahead').bind('typeahead:cursorchange', function (e, suggestion) {
@@ -136,7 +136,7 @@ $(document).ready(function() {
 });
 
 socket.on('newArrivalPrediction', function(data) {
-  console.log(data[0]);
+  //console.log(data[0]);
   //document.getElementById('log').innerHTML = data[0];
 });
 

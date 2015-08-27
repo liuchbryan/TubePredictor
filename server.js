@@ -5,22 +5,49 @@ var http = require('http');
 var https = require("https");
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
+var sleep = require('sleep');
 var tfl_data = {};
 var station_lookup = {};
+
+var api_key = "?app_id=f42bd7dc&app_key=a1bb31ec35c0148a84f5de064202c479"
 
 var moorgate_northern_outbound = {
   station : "Moorgate",
   line : "Northern",
   direction : "Outbound",
 };
-moorgate_northern_inbound = {
+var moorgate_northern_inbound = {
   station : "Moorgate",
   line : "Northern",
   direction : "Inbound",
 };
-station_lookup[JSON.stringify(moorgate_northern_outbound)] = "/StopPoint/940GZZLUMGT/Arrivals?app_id=f42bd7dc&app_key=a1bb31ec35c0148a84f5de064202c479";
-station_lookup[JSON.stringify(moorgate_northern_inbound)] = "/StopPoint/940GZZLUMGT/Arrivals?app_id=f42bd7dc&app_key=a1bb31ec35c0148a84f5de064202c479";
+var euston_victoria_outbound = {
+  station : "Euston",
+  line : "Victoria",
+  direction : "Outbound"
+}
+var euston_victoria_inbound = {
+  station : "Euston",
+  line : "Victoria",
+  direction : "Inbound"
+}
+var waterloo_jubilee_outbound = {
+  station : "Waterloo",
+  line : "Jubilee",
+  direction : "Outbound"
+}
+var waterloo_jubilee_inbound = {
+  station : "Waterloo",
+  line : "Jubilee",
+  direction : "Inbound"
+}
 
+station_lookup[JSON.stringify(moorgate_northern_outbound)] = "/StopPoint/940GZZLUMGT/Arrivals"+api_key;
+station_lookup[JSON.stringify(moorgate_northern_inbound)] = "/StopPoint/940GZZLUMGT/Arrivals"+api_key;
+station_lookup[JSON.stringify(euston_victoria_outbound)] = "/StopPoint/940GZZLUEUS/Arrivals"+api_key;
+station_lookup[JSON.stringify(euston_victoria_inbound)] = "/StopPoint/940GZZLUEUS/Arrivals"+api_key;
+station_lookup[JSON.stringify(waterloo_jubilee_outbound)] = "/StopPoint/940GZZLUWLO/Arrivals"+api_key;
+station_lookup[JSON.stringify(waterloo_jubilee_inbound)] = "/StopPoint/940GZZLUWLO/Arrivals"+api_key;
 // module for accessing the data about the interval between train arrivals
 var interArrival = require('./api_logger/interArrival.js');
 
@@ -80,10 +107,10 @@ io.sockets.on('connection', function(socket) {
     console.log(station);
     // Using default station 'moorgate',
     // user selected station is passed in as 'station'
-
+    //console.log(tfl_data);
     if (tfl_data[JSON.stringify(station)] != null) {
       var times = tfl_data[JSON.stringify(station)];
-      console.log(times);
+      //console.log(times);
       if (times[0] != null &&
           times[1] != null) {
         socket.emit('newTubeTime', [times[0].timeToStation, times[1].timeToStation]);
@@ -142,7 +169,7 @@ io.sockets.on('connection', function(socket) {
           console.log("TfL rate limit exceeded");
           return;
         }
-        console.log(stations);
+        //console.log(stations);
         //northernTrains.sort(function (a,b){return a.timeToStation - b.timeToStation});
         //socket.emit('newArrivalPrediction', northernTrains);
       });
@@ -174,9 +201,12 @@ var process_response = function(key, response) {
   //the whole response has been recieved, so we just print it out here
   response.on('end', function () {
     try {
-      var data = JSON.parse(str).filter(function (a) {return a.modeName == "tube" && a.direction == station.direction.toLowerCase()});
+      var data = JSON.parse(str).filter(function (a) {return a.modeName == "tube" && a.direction == station.direction.toLowerCase() && a.lineName == station.line});
     } catch (e) {
       console.log("TfL rate limit exceeded");
+    }
+    if (!data) {
+      return;
     }
     data.sort(function (a,b){return a.timeToStation - b.timeToStation});
     tfl_data[key] = data;
@@ -190,16 +220,18 @@ var process_response = function(key, response) {
 
 function getAPI () {
   console.log("getAPI");
-
+  var timeout = 0;
   Object.keys(station_lookup).forEach(function(station){
-    console.log("Test");
-    console.log(station);
+
     var options = {
       host: 'api.tfl.gov.uk',
       path: station_lookup[station]
     };
     var callback = process_response.bind(this, station)
+    console.log(station);
     https.request(options, callback).end();
+    sleep.usleep(500000)
+    timeout += 10000;
   });
 
 }
