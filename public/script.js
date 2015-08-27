@@ -4,16 +4,17 @@ var current_time = 1000;
 var showing_first_train = true;
 var delay_count = 0;
 var previousDirection = 'Outbound';
-var selectedStation = 'Moorgate';
-var selectedLine = 'Northern';
-var selectedDirection = 'Outbound';
+var selectedStation = null; //'Moorgate';
+var selectedLine = null; //'Northern';
+var selectedDirection = null; //'Outbound';
 
 $(function() {
-  clock = $('.tubeClock').FlipClock(3600, {
+  clock = $('.tubeClock').FlipClock(0, {
     countdown: true,
     clockFace: 'MinuteCounter'
   });
-
+  clock.setTime(0);
+  clock.stop();
 });
 
 socket.on('connect', function(){
@@ -48,7 +49,7 @@ socket.on('newTubeTime', function(time) {
         clock.start();
       }
     } else {
-      if (clock.getTime() - first_train > 120 || delay_count > 18) {
+      if (clock.getTime() - first_train > 120 || delay_count > 60) {
         document.getElementById("notification").innerHTML = "<div class='alert alert-danger'><strong>Delay detected!</strong></div>";
       }
     }
@@ -66,7 +67,7 @@ socket.on('newTubeTime', function(time) {
       ++delay_count;
       if (clock.getTime() - first_train > 50 || delay_count > 8) {
         document.getElementById("notification").innerHTML = "<div class='alert alert-danger'><strong>Delay detected!</strong></div>";
-        delay.clock()
+        //clock.stop();
       }
     }
   }
@@ -216,11 +217,11 @@ setInterval(function() {
 }, 15000);
 socket.emit('getTubeServiceData');
 
-socket.emit('getTubeTime', {
-  station : "Moorgate",
-  line : "Northern",
-  direction : "Outbound",
-});
+// socket.emit('getTubeTime', {
+//   station : "Moorgate",
+//   line : "Northern",
+//   direction : "Outbound",
+// });
 socket.emit('getArrivalPrediction', {
   station : "Moorgate",
   line : "Northern",
