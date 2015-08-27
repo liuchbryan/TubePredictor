@@ -50,7 +50,7 @@ socket.on('newTubeTime', function(time) {
       }
     } else {
       if (clock.getTime() - first_train > 120 || delay_count > 60) {
-        document.getElementById("notification").innerHTML = "<div class='alert alert-danger'><strong>Delay detected!</strong></div>";
+        //document.getElementById("notification").innerHTML = "<div class='alert alert-danger'><strong>Delay detected!</strong></div>";
       }
     }
   } else {
@@ -65,8 +65,8 @@ socket.on('newTubeTime', function(time) {
       }
     } else {
       ++delay_count;
-      if (clock.getTime() - first_train > 50 || delay_count > 8) {
-        document.getElementById("notification").innerHTML = "<div class='alert alert-danger'><strong>Delay detected!</strong></div>";
+      if (clock.getTime() - first_train > 120 || delay_count > 60) {
+        //document.getElementById("notification").innerHTML = "<div class='alert alert-danger'><strong>Delay detected!</strong></div>";
         //clock.stop();
       }
     }
@@ -192,6 +192,9 @@ function drawChart(data) {
 
 socket.on('newTubeServiceData', function(data) {
   console.log("Got new data to plot the graph.");
+  if (selectedStation == null || selectedLine == null || selectedDirection == null) {
+    return;
+  }
   drawChart(data);
 });
 
@@ -214,7 +217,7 @@ setInterval(function() {
 
 setInterval(function() {
   socket.emit('getTubeServiceData');
-}, 15000);
+}, 7500);
 socket.emit('getTubeServiceData');
 
 // socket.emit('getTubeTime', {
